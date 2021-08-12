@@ -28,12 +28,12 @@ def main():
     cv.imshow('Binary Threshold', thresh)
 
     num = 0
-    contours,h  = cv.findContours(thresh,1,2)
+    contours,h  = cv.findContours(thresh.copy(),cv.RETR_EXTERNAL,2)
     for cnt in contours:
             area = cv.contourArea(cnt)
             # if ((area >= 270) & (area <= 1000)):
             print("contour num = {}\ncontour area = {}".format(cnt,area))
-            cv.drawContours(img,[cnt],0,(0,0,255),2)
+            cv.drawContours(img,[cnt],0,(0,0,255),1)
             num += 1
             cv.imshow("contour num = {}".format(num), img)
             cv.waitKey(0)
