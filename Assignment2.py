@@ -5,8 +5,7 @@ import numpy as np
 def main():
 
     # ---------------- Load image
-
-    img = cv.imread("data/cocopops.jpg")
+    img = cv.imread("images/Q1/cocopops.jpg")
     if img is None:
         print("ERROR::CV::Could not read image.")
         return 1
@@ -19,8 +18,6 @@ def main():
     img = cv.resize(img, (cols, rows))
 
     cv.imshow("cocopops", img)
-    cv.imwrite('../images/01/01.PNG', img)
-
     # Convert image from BGR to HSV
     blurred = cv.GaussianBlur(img, (7, 7), 0)
     hsv = cv.cvtColor(blurred,cv.COLOR_BGR2HSV)
@@ -53,8 +50,8 @@ def main():
                 # cv.imshow("contour num = {}".format(num), img)
                 # cv.waitKey(0)
     cv.putText(img, "Number of single Cocopops = " + "{}".format(num), (30, 700), cv.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 0, 0), 2)            
-    cv.imshow('img001', img)
-
+    cv.imshow('Q1_result', img)
+    cv.imwrite('images/Q1/Q1_result.png', img)
     cv.waitKey(0)
     cv.destroyAllWindows()   
 
