@@ -1,63 +1,38 @@
-import cv2 as cv
+# Import the necessary libraries
+import cv2
 import numpy as np
-import imutils
 
-def main():
+# Read the image as a grayscale image
+img = cv2.imread('images/Q3/Wire_Straight.jpg', 0)
+rows, cols = img.shape
+rows = rows // 4
+cols = cols // 4
+img = cv2.resize(img, (cols, rows))
+# Threshold the image
+ret,img = cv2.threshold(img, 60, 255, 0)
+cv2.imshow("thresh",img)
+# Step 1: Create an empty skeleton
+size = np.size(img)
+skel = np.zeros(img.shape, np.uint8)
 
-    # ---------------- Load image ----------------- #
+# Get a Cross Shaped Kernel
+element = cv2.getStructuringElement(cv2.MORPH_CROSS, (3,3))
 
-    img = cv.imread("data/Wire_Straight.jpg")
+# Repeat steps 2-4
+while True:
+    #Step 2: Open the image
+    open = cv2.morphologyEx(img, cv2.MORPH_OPEN, element)
+    #Step 3: Substract open from the original image
+    temp = cv2.subtract(img, open)
+    #Step 4: Erode the original image and refine the skeleton
+    eroded = cv2.erode(img, element)
+    skel = cv2.bitwise_or(skel,temp)
+    img = eroded.copy()
+    # Step 5: If there are no white pixels left ie.. the image has been completely eroded, quit the loop
+    if cv2.countNonZero(img)==0:
+        break
 
-    # Resize image
-    rows, cols, channels = img.shape
-    rows = rows // 3
-    cols = cols // 3
-    img = cv.resize(img, (cols, rows))
-    print('h, w col: ', img.shape)
-    print('width:', sum((img > 60).any(axis=0)))
-    print('height:', sum((img > 60).any(axis=1)))
-
-    cv.imshow("Straight Wire", img)
-   
-    # ---- Convert image from BGR to grayscale
-    gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    kernel = np.ones((5,5),np.uint8)
-    blurred = cv.GaussianBlur(gray_img, (5,5), 0)
-
-    #-------------- Thresholding -----------#
-    thresh = cv.threshold(blurred, 60, 255, cv.THRESH_BINARY)[1]
-    cv.imshow('Binary Threshold', thresh)
-
-    num = 0
-    contours,h  = cv.findContours(thresh.copy(),cv.RETR_EXTERNAL,cv.CHAIN_APPROX_NONE) #2
-    # contours = contours[0] if len(contours) == 2 else contours[1]
-    # contours = imutils.grab_contours(contours) 
-
-    # for cnt in contours:
-    #     area = cv.contourArea(cnt)
-    #     M = cv.moments(cnt)
-    #     cX = int(M["m10"] / M["m00"])
-    #     cY = int(M["m01"] / M["m00"])
-    #     # if ((area >= 270) & (area <= 1000)):
-    #     # print("contour num = {}\ncontour area = {}".format(cnt,area))
-    #     cv.drawContours(img,[cnt],0,(0,0,255),1)
-    #     cv.circle(img, (cX, cY), 7, (255, 255, 255), -1)
-    #     cv.putText(img, "center", (cX - 20, cY - 20),
-    #     cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-    #     num += 1
-    #     cv.imshow("contour num = {}".format(num), img)
-    #     cv.waitKey(0)
-    # # cv.line(img, cnt[2], cnt[3], (0,255,0), 1)
-    # cv.imshow('line added to image', img)
-    # cv.waitKey(0)
-    # cv.putText(img, "Length of wire = " + "{}".format(num), (30, 700), cv.FONT_HERSHEY_COMPLEX_SMALL, 2, (0, 0, 0), 2)            
-    cv.imshow('final image', img)
-    cv.waitKey(0)
-    cv.destroyAllWindows()   
-
-    return 0
-
-
-if __name__ == "__main__":
-
-    main()
+# Displaying the final skeleton
+cv2.imshow("Skeleton",skel)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
