@@ -19,8 +19,8 @@ def main():
 
     cv.imshow("cocopops", img)
     # Convert image from BGR to HSV
-    blurred = cv.GaussianBlur(img, (7, 7), 0)
-    hsv = cv.cvtColor(blurred,cv.COLOR_BGR2HSV)
+    # blurred = cv.GaussianBlur(img, (7, 7), 0)
+    hsv = cv.cvtColor(img,cv.COLOR_BGR2HSV)
 
 #-------------- Create masks from HSV values
     lower_1 = np.array([0,99,0])
